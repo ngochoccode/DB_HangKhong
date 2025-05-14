@@ -104,3 +104,50 @@ WHERE LOWER(TB.SANBAYDI) = LOWER ('HAN')  AND LOWER (TB.SANBAYDEN) = LOWER ('DAD
 AND TRUNC(CB.GIOCATCANH) = TO_DATE('06/06/2025', 'DD/MM/YYYY')  AND CB.SOGHETRONG >= 1;
 
 COMMIT;
+
+SELECT * FROM NHAN_VIEN nv;
+INSERT INTO NHAN_VIEN (
+    MaNhanVien, HoTen, CCCD, NgaySinh, GioiTinh,
+    SDT, Email, ChucVu, LuongCoBan, PhucLoi, NgayVaoLam
+) VALUES
+('NV001', 'Nguyễn Văn A', '012345678901234', DATE '1985-03-15', 'M',
+ '0901234567', 'vana@example.com', 'Phi công',       15000000, 'Bảo hiểm y tế; Phép năm', TO_TIMESTAMP('2010-06-01 08:00:00','YYYY-MM-DD HH24:MI:SS'));
+
+INSERT INTO NHAN_VIEN (
+    MaNhanVien, HoTen, CCCD, NgaySinh, GioiTinh,
+    SDT, Email, ChucVu, LuongCoBan, PhucLoi, NgayVaoLam
+) VALUES
+('NV002', 'Trần Thị B', '023456789012345', DATE '1990-07-22', 'F',
+ '0912345678', 'thib@example.com', 'Tiếp viên',       12000000, 'Ăn ca; Đồng phục',      TO_TIMESTAMP('2012-09-15 09:30:00','YYYY-MM-DD HH24:MI:SS'));
+
+INSERT INTO NHAN_VIEN (
+    MaNhanVien, HoTen, CCCD, NgaySinh, GioiTinh,
+    SDT, Email, ChucVu, LuongCoBan, PhucLoi, NgayVaoLam
+) VALUES
+('NV003', 'Lê Văn C',    '034567890123456', DATE '1982-11-05', 'M',
+ '0923456789', 'vanc@example.com', 'Kỹ thuật viên',   10000000, 'Phụ cấp trách nhiệm',  TO_TIMESTAMP('2015-01-20 07:45:00','YYYY-MM-DD HH24:MI:SS'));
+
+INSERT INTO NHAN_VIEN (
+    MaNhanVien, HoTen, CCCD, NgaySinh, GioiTinh,
+    SDT, Email, ChucVu, LuongCoBan, PhucLoi, NgayVaoLam
+) VALUES
+('NV004', 'Phạm Thị D',  '045678901234567', DATE '1988-02-18', 'F',
+ '0934567890', 'thid@example.com', 'Nhân viên thủ tục',  8000000, 'Phép năm; Tiền xăng', TO_TIMESTAMP('2018-04-10 08:15:00','YYYY-MM-DD HH24:MI:SS'));
+
+INSERT INTO NHAN_VIEN (
+    MaNhanVien, HoTen, CCCD, NgaySinh, GioiTinh,
+    SDT, Email, ChucVu, LuongCoBan, PhucLoi, NgayVaoLam
+) VALUES
+('NV005', 'Hoàng Văn E', '056789012345678', DATE '1992-12-30', 'M',
+ '0945678901', 'vane@example.com', 'Nhân viên bảo vệ', 11000000, 'Phụ cấp công tác',    TO_TIMESTAMP('2016-11-05 10:00:00','YYYY-MM-DD HH24:MI:SS'));
+
+INSERT INTO NHAN_VIEN (
+    MaNhanVien, HoTen, CCCD, NgaySinh, GioiTinh,
+    SDT, Email, ChucVu, LuongCoBan, PhucLoi, NgayVaoLam
+) VALUES
+('NV006', 'Vũ Văn G',    '078901234567890', DATE '1980-09-12', 'M',
+ '0967890123', 'vang@example.com', 'Quản lý',         20000000, 'Xe công; Phép năm',    TO_TIMESTAMP('2008-03-01 08:00:00','YYYY-MM-DD HH24:MI:SS'));
+UPDATE NHAN_VIEN
+SET DiaChi = 'Hồ Chí Minh'
+
+SELECT * FROM NHAN_VIEN nv

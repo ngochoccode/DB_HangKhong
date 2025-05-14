@@ -141,6 +141,7 @@ BEGIN
     END IF;
 END;
 
+
 -- 3.6. Tổng điểm (DiemThuong) chỉ được tính cho chuyến bay nhận giá trị “Đã kết thúc”.
 CREATE OR REPLACE TRIGGER TRG_CHUYEN_BAY_TRANGTHAI_DIEMTHUONG
 AFTER UPDATE OF TrangThai ON CHUYEN_BAY
