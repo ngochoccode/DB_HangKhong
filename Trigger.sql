@@ -1,4 +1,4 @@
-﻿/* ================================= 1. QUẢN LÝ NHÂN VIÊN =================================== */
+================================= 1. QUẢN LÝ NHÂN VIÊN =================================== */
 -- 1.1 Mỗi nhân viên phải thuộc một trong các loại sau: Phi công, Tiếp viên, Kỹ thuật viên,
 -- Nhân viên bảo vệ, Nhân viên thủ tục, Quản lý.
 ALTER TABLE NHAN_VIEN
@@ -96,6 +96,95 @@ BEGIN
         RAISE_APPLICATION_ERROR(-20005, 'Tiếp viên phải có chứng chỉ đào tạo hợp lệ!');
     END IF;
 END;
+
+-- 1.5 Nhân viên phi công/tiếp viên chỉ được phân công cho một máy bay tại một thời điểm.
+CREATE OR REPLACE TRIGGER trg_PHAN_CONG_BAY_CHECK_ONLY 
+BEFORE INSERT OR UPDATE ON PHAN_CONG_BAY
+FOR EACH ROW
+DECLARE
+    v_count NUMBER;
+BEGIN
+    SELECT COUNT(*)
+    INTO v_count
+    FROM PHAN_CONG_BAY
+    WHERE MaNhanVien = :NEW.MaNhanVien
+      AND ((:NEW.ThoiGianBatDau < ThoiGianKetThuc) 
+      AND (ThoiGianBatDau < :NEW.ThoiGianKetThuc))
+      AND MaChuyenBay <> :NEW.MaChuyenBay;
+
+    IF v_count > 0 THEN
+        RAISE_APPLICATION_ERROR(-20006, 'Nhân viên đã được phân công cho một chuyến bay khác trong cùng thời gian.');
+    END IF;
+END;
+/
+
+-- 1.6 Chỉ phân công cho phi công/tiếp viên khi chuyến bay có trạng thái “Đang mở”.
+
+-- Trigger trên bảng PHAN_CONG_BAY
+    CREATE OR REPLACE TRIGGER trg_chuyen_bay_check_status
+    BEFORE INSERT OR UPDATE ON PHAN_CONG_BAY
+    FOR EACH ROW
+    DECLARE
+        v_trang_thai CHUYEN_BAY.TrangThai%TYPE; 
+    BEGIN
+        -- Lấy trạng thái của chuyến bay
+        SELECT TrangThai INTO v_trang_thai
+        FROM CHUYEN_BAY
+        WHERE MaChuyenBay = :NEW.MaChuyenBay;
+    
+        -- Kiểm tra nếu chuyến bay không ở trạng thái "Đang mở"
+        IF v_trang_thai <> 'Đang mở' THEN
+            RAISE_APPLICATION_ERROR(-20007, 'Không thể phân công nhân viên vì chuyến bay không ở trạng thái "Đang mở".');
+        END IF;
+    END;
+    /
+    
+-- Trigger trên bảng CHUYEN_BAY
+    CREATE OR REPLACE TRIGGER trg_chuyen_bay_update_status
+    BEFORE UPDATE ON CHUYEN_BAY
+    FOR EACH ROW
+    DECLARE
+        v_count NUMBER;
+    BEGIN
+        -- Chỉ kiểm tra khi trạng thái được cập nhật thành "Đang mở"
+        IF :NEW.TrangThai = 'Đang mở' THEN
+            -- Kiểm tra xem chuyến bay đã có phi công/tiếp viên được phân công chưa
+            SELECT COUNT(*) INTO v_count
+            FROM PHAN_CONG_BAY
+            WHERE MaChuyenBay = :NEW.MaChuyenBay;
+    
+            -- Nếu đã có người được phân công, không cho phép cập nhật trạng thái
+            IF v_count > 0 THEN
+                RAISE_APPLICATION_ERROR(-20008, 'Không thể cập nhật trạng thái "Đang mở" vì chuyến bay đã có phi công/tiếp viên được phân công.');
+            END IF;
+        END IF;
+    END;
+    /
+    
+-- 1.7 Trạng thái nhân viên nhận giá trị “Đã phân công” thì không được phân công ca mới trong cùng khoảng thời gian.
+CREATE OR REPLACE TRIGGER trg_check_phan_cong_ca_truc
+BEFORE INSERT OR UPDATE ON PHAN_CONG_CA_TRUC
+FOR EACH ROW
+DECLARE
+    v_count NUMBER;  
+    v_trang_thai PHAN_CONG_CA_TRUC.TrangThai%TYPE;  -- Sử dụng %TYPE để đảm bảo kiểu dữ liệu đúng
+BEGIN
+    -- Kiểm tra xem nhân viên đã được phân công ca khác trong cùng khoảng thời gian chưa
+    SELECT COUNT(*)
+    INTO v_count
+    FROM PHAN_CONG_CA_TRUC
+    WHERE MaNhanVien = :NEW.MaNhanVien
+      AND MaSanBay <> :NEW.MaSanBay
+      AND TrangThai = 'Đã phân công'
+      AND (ThoiGianKetThuc > :NEW.ThoiGianBatDau AND ThoiGianBatDau < :NEW.ThoiGianKetThuc);
+
+    -- Nếu tìm thấy kết quả trùng lặp, báo lỗi
+    IF v_count > 0 THEN
+        RAISE_APPLICATION_ERROR(-20009, 'Nhân viên đã được phân công ca khác trong cùng khoảng thời gian.');
+    END IF;
+END;
+/
+
 /* ============================================ 2. QUẢN LÝ CHUYẾN BAY ================================== */
 -- 2.1 Ràng buộc toàn vẹn cho trạng thái của chuyến bay đang chọn (TrangThai) nhận giá trị là “Đang mở” thì mới có thể đặt vé chuyến bay đó.
 CREATE OR REPLACE TRIGGER TRG_VE_MAY_BAY_CHECK_TRANGTHAI
@@ -612,23 +701,30 @@ BEGIN
     END IF;
 END;
 
+/* ================================ QUẢN LÝ DỊCH VỤ BỔ SUNG  ============================= */
+-- 5.1. Chỉ những vé nhận giá trị “Chưa thanh toán” hoặc “Đã thanh toán” thì mới có thể đăng ký dịch vụ bổ sung.
+CREATE OR REPLACE TRIGGER trg_ct_dich_vu_check_trangthai_ve_dangky
+BEFORE INSERT OR UPDATE ON CT_DICH_VU
+FOR EACH ROW
+DECLARE
+    v_trang_thai VARCHAR2(50);
+BEGIN
+    -- Lấy trạng thái vé tương ứng
+    SELECT TrangThaiVe INTO v_trang_thai
+    FROM VE_MAY_BAY
+    WHERE MaVe = :NEW.MaVe;
 
-SELECT 
-    uc.constraint_name,
-    ucc.table_name,
-    ucc.column_name,
-    uc.constraint_type
-FROM 
-    user_constraints uc
-JOIN 
-    user_cons_columns ucc 
-ON 
-    uc.constraint_name = ucc.constraint_name
-WHERE 
-    uc.constraint_name = 'SYS_C009432';
+    -- Kiểm tra trạng thái vé
+    IF v_trang_thai NOT IN ('Chưa thanh toán', 'Đã thanh toán') THEN
+        RAISE_APPLICATION_ERROR(-20004, 'Chỉ những vé chưa thanh toán hoặc đã thanh toán mới được đăng ký dịch vụ.');
+    END IF;
+END;
+/
 
-
-
+-- 5.2. Giá tiền dịch vụ bổ sung (GiaTien) không âm (≥0).
+ALTER TABLE DICH_VU_BO_SUNG
+ADD CONSTRAINT check_dich_vu_bo_sung_giatien_khong_am
+CHECK (GiaTien >= 0);
 
 
 
