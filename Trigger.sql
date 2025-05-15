@@ -116,6 +116,7 @@ BEGIN
 END;
 /
 
+
 -- 2.2 Ràng buộc toàn vẹn cho thời gian khách hàng có thể đặt vé là trước thời gian cất cánh của chuyến bay (GioCatCanh) 3 giờ.
 CREATE OR REPLACE TRIGGER TRG_VE_MAY_BAY_DATVE_TRUOC3H
 BEFORE INSERT OR UPDATE ON VE_MAY_BAY
@@ -135,7 +136,9 @@ BEGIN
 END;
 /
 
+
 -- 2.3 Ràng buộc toàn vẹn cho tình trạng vé (TrangThaiVe) nhận giá trị “Chưa thanh toán” và số lượng ghế trống của chuyến bay (SoGheTrong) giảm xuống 1 đơn vị sau khi hoàn tất thủ tục đăng ký.
+
 CREATE OR REPLACE TRIGGER TRG_VE_MAY_BAY_UPDATE_SOGHETRONG
 AFTER UPDATE OF TrangThaiVe ON VE_MAY_BAY
 FOR EACH ROW
@@ -155,7 +158,9 @@ BEGIN
 END;
 /
 
+
 -- 2.4 Ràng buộc toàn vẹn cho khách hàng không được đặt vé đang được giữ chỗ/có tình trạng (TrangThaiVe) đã nhận một trong các giá trị (”Chưa thanh toán”, “Đã thanh toán”).
+
 CREATE OR REPLACE TRIGGER TRG_CT_VE_GIUGHE 
 BEFORE INSERT OR UPDATE ON CT_VE
 FOR EACH ROW
@@ -192,6 +197,7 @@ END;
 /
 
 -- 2.5 Ràng buộc toàn vẹn cho tình trạng của vé máy bay (TrangThaiVe) nhận một trong các giá trị (”Chưa thanh toán”, “Đã thanh toán”) thì mới có thể hủy/đổi vé.
+
 CREATE OR REPLACE TRIGGER TRG_QUAN_LY_HUY_DOI_VE_CHECK_HOPLE
 BEFORE INSERT OR UPDATE ON QUAN_LY_HUY_DOI_VE
 FOR EACH ROW
@@ -227,6 +233,7 @@ BEGIN
 END;
 /
 
+
 -- 2.6 Ràng buộc toàn vẹn cho vé máy bay chỉ được hủy/đổi chỗ trước ngày cất cánh của chuyến bay (GioCatCanh) 1 ngày.
 CREATE OR REPLACE TRIGGER TRG_QUAN_LY_HUY_DOI_VE_TRUOC1NGAY 
 BEFORE INSERT OR UPDATE ON QUAN_LY_HUY_DOI_VE
@@ -256,6 +263,7 @@ END;
 /
 
 -- 2.7 Ràng buộc toàn vẹn cho tình trạng vé bị hủy/đổi và số lượng ghế trống của chuyến bay (SoGheTrong) tăng lên một đơn vị sau khi hoàn tất thủ tục
+
 CREATE OR REPLACE TRIGGER TRG_QUAN_LY_HUY_DOI_VE_UPDATE_GHE
 AFTER UPDATE ON QUAN_LY_HUY_DOI_VE
 FOR EACH ROW
@@ -279,7 +287,6 @@ BEGIN
     END IF;
 END;
 /
-
 
 -- 2.8 Ràng buộc toàn vẹn cho ngày đặt vé phải nằm trong khoảng giữa ngày bắt đầu (NgayBatDau) và ngày kết thúc của voucher/ưu đãi (NgayKetThuc).
 
