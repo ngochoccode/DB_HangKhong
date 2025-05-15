@@ -1,4 +1,4 @@
-﻿
+﻿﻿
 -- Sân bay
 
 INSERT INTO SAN_BAY (MaSanBay, TenSanBay, TinhThanhPho, QuocGia) VALUES ('SGN', N'Tân Sơn Nhất', N'TP. Hồ Chí Minh', N'Việt Nam');
@@ -103,4 +103,52 @@ FROM CHUYEN_BAY CB JOIN TUYEN_BAY TB ON CB.MATUYENBAY = TB.MATUYENBAY
 WHERE LOWER(TB.SANBAYDI) = LOWER ('HAN')  AND LOWER (TB.SANBAYDEN) = LOWER ('DAD')  
 AND TRUNC(CB.GIOCATCANH) = TO_DATE('06/06/2025', 'DD/MM/YYYY')  AND CB.SOGHETRONG >= 1;
 
-COMMIT;
+
+
+INSERT INTO NHAN_VIEN (MaNhanVien, HoTen, CCCD, NgaySinh, GioiTinh, SDT, Email, DiaChi, ChucVu, LuongCoBan, PhucLoi, NgayVaoLam) 
+VALUES(
+    FN_TAO_MANV, 'Trần Thị B', '012345678902', TO_DATE('1992-02-02', 'YYYY-MM-DD'),
+    'F', '0912345678', 'b@example.com', 'TP.HCM', 'Kỹ thuật viên', 8200000, NULL, SYSTIMESTAMP
+);
+
+INSERT INTO NHAN_VIEN (MaNhanVien, HoTen, CCCD, NgaySinh, GioiTinh, SDT, Email, DiaChi, ChucVu, LuongCoBan, PhucLoi, NgayVaoLam) 
+VALUES(
+    FN_TAO_MANV, 'Lê Văn C', '012345678903', TO_DATE('1985-03-03', 'YYYY-MM-DD'),
+    'M', '0923456789', 'c@example.com', 'Đà Nẵng', 'Nhân viên bảo vệ', 6500000, NULL, SYSTIMESTAMP
+);
+
+INSERT INTO NHAN_VIEN (MaNhanVien, HoTen, CCCD, NgaySinh, GioiTinh, SDT, Email, DiaChi, ChucVu, LuongCoBan, PhucLoi, NgayVaoLam) 
+VALUES(
+    FN_TAO_MANV, 'Phạm Thị D', '012345678904', TO_DATE('1988-04-04', 'YYYY-MM-DD'),
+    'F', '0934567890', 'd@example.com', 'Cần Thơ', 'Nhân viên bảo vệ', 6600000, NULL, SYSTIMESTAMP
+);
+
+INSERT INTO NHAN_VIEN (MaNhanVien, HoTen, CCCD, NgaySinh, GioiTinh, SDT, Email, DiaChi, ChucVu, LuongCoBan, PhucLoi, NgayVaoLam) 
+VALUES(
+    FN_TAO_MANV, 'Hoàng Văn E', '012345678905', TO_DATE('1993-05-05', 'YYYY-MM-DD'),
+    'M', '0945678901', 'e@example.com', 'Bình Dương', 'Nhân viên thủ tục', 7000000, NULL, SYSTIMESTAMP
+);
+
+INSERT INTO NHAN_VIEN (MaNhanVien, HoTen, CCCD, NgaySinh, GioiTinh, SDT, Email, DiaChi, ChucVu, LuongCoBan, PhucLoi, NgayVaoLam)
+VALUES(
+    FN_TAO_MANV, 'Đặng Thị F', '012345678906', TO_DATE('1995-06-06', 'YYYY-MM-DD'),
+    'F', '0956789012', 'f@example.com', 'Hải Phòng', 'Nhân viên thủ tục', 7100000, NULL, SYSTIMESTAMP
+);
+
+INSERT INTO NHAN_VIEN 
+(MaNhanVien, HoTen, CCCD, NgaySinh, GioiTinh, SDT, Email, DiaChi, ChucVu, LuongCoBan, PhucLoi, NgayVaoLam)
+ VALUES(
+    FN_TAO_MANV, 'Vũ Văn G', '012345678907', TO_DATE('1980-07-07', 'YYYY-MM-DD'),
+    'M', '0967890123', 'g@example.com', 'Nghệ An', 'Quản lý', 15000000, 'Bảo hiểm + thưởng', SYSTIMESTAMP
+);
+
+INSERT INTO NHAN_VIEN 
+(MaNhanVien, HoTen, CCCD, NgaySinh, GioiTinh, SDT, Email, DiaChi, ChucVu, LuongCoBan, PhucLoi, NgayVaoLam) 
+VALUES(
+    FN_TAO_MANV, 'Bùi Thị H', '012345678908', TO_DATE('1982-08-08', 'YYYY-MM-DD'),
+    'F', '0978901234', 'h@example.com', 'Nam Định', 'Quản lý', 15200000, 'Bảo hiểm + thưởng', SYSTIMESTAMP
+);
+
+
+
+
