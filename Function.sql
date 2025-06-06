@@ -1,0 +1,112 @@
+﻿-- Tạo sequence cho Mã khách hàng
+CREATE SEQUENCE SEQ_MAKH
+START WITH 1
+INCREMENT BY 1
+NOCACHE
+NOCYCLE;
+
+-- Tạo hàm để sinh mã KHxxxx1
+CREATE OR REPLACE FUNCTION FN_TAO_MAKH RETURN VARCHAR2 IS
+    so NUMBER;
+BEGIN
+    SELECT SEQ_MAKH.NEXTVAL INTO so FROM dual;
+    RETURN 'KH' || LPAD(so, 5, '0'); 
+END;
+
+---- Tạo mã vé tự động
+CREATE SEQUENCE SEQ_MAVE
+    START WITH 1
+    INCREMENT BY 1
+    NOCACHE
+    NOCYCLE;
+
+CREATE OR REPLACE FUNCTION FN_TAO_MAVE (p_MaChuyenBay VARCHAR2)
+    RETURN VARCHAR2 IS
+    v_next_val NUMBER;
+    v_ma_ve VARCHAR2(15);
+BEGIN
+    -- Lấy giá trị tiếp theo từ sequence toàn cục
+    SELECT SEQ_MAVE.NEXTVAL INTO v_next_val FROM DUAL;
+
+    -- Ghép MaChuyenBay và số thứ tự để tạo mã vé
+    -- LPAD(v_next_val, 2, '0') đảm bảo số có 2 chữ số (ví dụ: 1 -> '01', 10 -> '10')
+    v_ma_ve := 'VE' || p_MaChuyenBay || LPAD(v_next_val, 3, '0');
+
+    RETURN v_ma_ve;
+END;
+
+
+-- Tạo sequence cho Mã thanh toán
+CREATE SEQUENCE SEQ_MATT
+START WITH 1
+INCREMENT BY 1
+NOCACHE
+NOCYCLE;
+
+-- Tạo hàm để sinh mã TTxxxx1
+CREATE OR REPLACE FUNCTION FN_TAO_MATT RETURN VARCHAR2 IS
+    so NUMBER;
+BEGIN
+    SELECT SEQ_MATT.NEXTVAL INTO so FROM dual;
+    RETURN 'TT' || LPAD(so, 7, '0');
+END;
+
+-- Tạo sequence cho Mã hành khách
+CREATE SEQUENCE SEQ_MAHK
+START WITH 1
+INCREMENT BY 1
+NOCACHE
+NOCYCLE;
+
+-- Tạo hàm để sinh mã HKxxxx1
+CREATE OR REPLACE FUNCTION FN_TAO_MAHK RETURN VARCHAR2 IS
+    so NUMBER;
+BEGIN
+    SELECT SEQ_MAHK.NEXTVAL INTO so FROM dual;
+    RETURN 'HK' || LPAD(so, 5, '0'); 
+END;
+
+--- Tạo sequence cho chuyến bay
+CREATE SEQUENCE SEQ_CHUYENBAY
+START WITH 1
+INCREMENT BY 1
+NOCACHE
+NOCYCLE;
+
+-- Tạo hàm để sinh mã CBxxx
+CREATE OR REPLACE FUNCTION FN_TAO_MACB RETURN VARCHAR2 IS
+    so NUMBER;
+BEGIN
+    SELECT SEQ_CHUYENBAY.NEXTVAL INTO so FROM dual;
+    RETURN 'CB' || LPAD(so, 4, '0'); -- Tạo CB001, CB002,...
+END;
+
+-- Tạo sequence cho Mã nhân viên
+CREATE SEQUENCE SEQ_MANV
+START WITH 1
+INCREMENT BY 1
+NOCACHE
+NOCYCLE;
+
+-- Tạo hàm để sinh mã NVxxx
+CREATE OR REPLACE FUNCTION FN_TAO_MANV RETURN VARCHAR2 IS
+    so NUMBER;
+BEGIN
+    SELECT SEQ_MANV.NEXTVAL INTO so FROM dual;
+    RETURN 'NV' || LPAD(so, 3, '0'); -- Tạo NV001, NV002,...
+END;
+
+-- Tạo sequence cho Mã Bằng Cấp
+CREATE SEQUENCE SEQ_MABC
+START WITH 1
+INCREMENT BY 1
+NOCACHE
+NOCYCLE;
+
+-- Tạo hàm để sinh mã BCxxx
+CREATE OR REPLACE FUNCTION FN_TAO_MABC RETURN VARCHAR2 IS
+    so NUMBER;
+BEGIN
+    SELECT SEQ_MABC.NEXTVAL INTO so FROM dual;
+    RETURN 'BC' || LPAD(so, 3, '0'); -- Tạo BC001, BC002,...
+END;
