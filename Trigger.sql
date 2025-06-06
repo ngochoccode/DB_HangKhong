@@ -1,4 +1,4 @@
-﻿/* ================================= 1. QUẢN LÝ NHÂN VIÊN =================================== */
+================================= 1. QUẢN LÝ NHÂN VIÊN =================================== */
 -- 1.1 Mỗi nhân viên phải thuộc một trong các loại sau: Phi công, Tiếp viên, Kỹ thuật viên,
 -- Nhân viên bảo vệ, Nhân viên thủ tục, Quản lý.
 ALTER TABLE NHAN_VIEN
@@ -76,8 +76,10 @@ BEGIN
     END IF;
 END;
 
+
 /* ============================================ 2. QUẢN LÝ VÉ MÁY BAY ================================== */
 -- 2.1 Ràng buộc toàn vẹn cho trạng thái của chuyến bay đang chọn (TrangThai) nhận giá trị là “Đang mở” hoặc "Hoãn" thì mới có thể đặt vé chuyến bay đó.
+
 CREATE OR REPLACE TRIGGER TRG_VE_MAY_BAY_CHECK_TRANGTHAI
 BEFORE INSERT OR UPDATE ON VE_MAY_BAY
 FOR EACH ROW
@@ -96,6 +98,7 @@ BEGIN
 END;
 
 -- 2.3 Ràng buộc toàn vẹn cho tình trạng vé (TrangThaiVe) nhận giá trị “Chưa thanh toán” và số lượng ghế trống của chuyến bay (SoGheTrong) giảm xuống 1 đơn vị sau khi hoàn tất thủ tục đăng ký.
+
 CREATE OR REPLACE TRIGGER TRG_VE_MAY_BAY_UPDATE_SOGHETRONG
 AFTER UPDATE OF TrangThaiVe ON VE_MAY_BAY
 FOR EACH ROW
@@ -115,6 +118,7 @@ BEGIN
 END;
 
 -- 2.5 Ràng buộc toàn vẹn cho tình trạng của vé máy bay (TrangThaiVe) nhận một trong các giá trị (”Chưa thanh toán”, “Đã thanh toán”) thì mới có thể hủy/đổi vé.
+
 CREATE OR REPLACE TRIGGER TRG_QUAN_LY_HUY_DOI_VE_CHECK_HOPLE
 BEFORE INSERT OR UPDATE ON QUAN_LY_HUY_DOI_VE
 FOR EACH ROW
@@ -150,6 +154,7 @@ BEGIN
 END;
 
 -- 2.7 Ràng buộc toàn vẹn cho tình trạng vé bị hủy/đổi và số lượng ghế trống của chuyến bay (SoGheTrong) tăng lên một đơn vị sau khi hoàn tất thủ tục
+
 CREATE OR REPLACE TRIGGER TRG_QUAN_LY_HUY_DOI_VE_UPDATE_GHE
 AFTER UPDATE ON QUAN_LY_HUY_DOI_VE
 FOR EACH ROW
@@ -439,10 +444,23 @@ BEGIN
     END IF;
 END;
 
+/* ================================ QUẢN LÝ DỊCH VỤ BỔ SUNG  ============================= */
+-- 5.1. Chỉ những vé nhận giá trị “Chưa thanh toán” hoặc “Đã thanh toán” thì mới có thể đăng ký dịch vụ bổ sung.
+CREATE OR REPLACE TRIGGER trg_ct_dich_vu_check_trangthai_ve_dangky
+BEFORE INSERT OR UPDATE ON CT_DICH_VU
+FOR EACH ROW
+DECLARE
+    v_trang_thai VARCHAR2(50);
+BEGIN
+    -- Lấy trạng thái vé tương ứng
+    SELECT TrangThaiVe INTO v_trang_thai
+    FROM VE_MAY_BAY
+    WHERE MaVe = :NEW.MaVe;
 
-
-
-
+-- 5.2. Giá tiền dịch vụ bổ sung (GiaTien) không âm (≥0).
+ALTER TABLE DICH_VU_BO_SUNG
+ADD CONSTRAINT check_dich_vu_bo_sung_giatien_khong_am
+CHECK (GiaTien >= 0);
 
 
 
